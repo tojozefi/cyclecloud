@@ -1,0 +1,121 @@
+################################
+## Cluster Configuration File ##
+################################
+
+[cluster EGSnrc]
+FormLayout = selectionpanel
+Category = Applications
+
+Autoscale = $Autoscale
+
+    [[node defaults]]
+    UsePublicNetwork = true
+    Credentials = azure  
+    ImageName = cycle.image.ubuntu16
+    SubnetId = azurecycle/azurecyclecloud/compute
+    Region = westeurope
+    KeyPairLocation = ~/.ssh/cyclecloud.pem
+    
+        [[[configuration]]]
+        
+        [[[cluster-init gridengine:default]]]
+        Optional = true
+
+    [[node master]]
+    MachineType = $MasterMachineType
+    IsReturnProxy = true
+    AdditionalClusterInitSpecs = =undefined
+    
+        [[[configuration]]]
+		run_list = role[central_manager], role[application_server], role[sge_master_role], role[scheduler], role[monitor]
+		
+		[[[cluster-init egs:master:1.0]]]
+
+        [[[network-interface eth0]]]
+        AssociatePublicIpAddress = true
+        StaticPublicIpAddress = true
+		
+        [[[input-endpoint ganglia]]]
+        PrivatePort = 8652
+        PublicPort = 8652
+
+
+    [[nodearray execute]]
+    MachineType = $ExecuteMachineType
+    MaxCoreCount = $MaxExecuteCoreCount
+    Interruptible = $UseLowPrio
+    AdditionalClusterInitSpecs = =undefined
+
+
+        [[[configuration]]]
+		run_list = role[execute], role[sge_execute_role]
+
+		[[[cluster-init egs:execute:1.0]]]
+
+        [[[network-interface eth0]]]
+        AssociatePublicIpAddress = false
+
+
+[parameters About]
+Order = 1
+
+    [[parameters About EGSnrc]]
+
+        [[[parameter egsnrc]]]
+        HideLabel = true
+        Config.Plugin = pico.widget.HtmlTemplateWidget
+        Config.Template := "<table><tr><td><p>This template implements a cluster with EGSnrc application software. EGSnrc (NRC's Electron Gamma Shower) is an open-source software toolkit for modelling radiation transport through matter. EGSnrc relies on Monte Carlo simulation, which is the most accurate method to model the transport of radiation. See the <a href=\"https://www.nrc-cnrc.gc.ca/eng/solutions/advisory/egsnrc_index.html/\" target=\"_blank\">EGSnrc project site</a> for an overview.</p></td></tr></table>"
+
+    [[parameters About Grid Engine]]
+
+        [[[parameter gridengine]]]
+        HideLabel = true
+        Config.Plugin = pico.widget.HtmlTemplateWidget
+        Config.Template := "<table><tr><td><p>This template implements a cluster with Grid Engine scheduler software. Grid Engine is a highly configurable open source workload manager. See the <a href=\"http://gridscheduler.sourceforge.net/\" target=\"_blank\">Grid Scheduler project site</a> for an overview.</p></td></tr></table>"
+
+[parameters Cluster Settings]
+Order = 10
+
+    [[parameters Virtual Machines ]]
+    Description = "The cluster, in this case, has two roles: the scheduler master-node with shared filer and the execute hosts. Configure which VM types to use based on the requirements of your application."
+    Order = 20
+
+        [[[parameter MasterMachineType]]]
+        Label = Master VM Type
+        Description = The VM type for scheduler master node and shared filer.
+        ParameterType = Cloud.MachineType
+        DefaultValue = Standard_D12_v2
+
+        [[[parameter ExecuteMachineType]]]
+        Label = Execute VM Type
+        Description = The VM type for execute nodes
+        ParameterType = Cloud.MachineType
+        DefaultValue = Standard_F2s_v2
+        Config.Multiselect = true
+
+
+    [[parameters Auto-Scaling]]
+    Description = "The cluster can autoscale to the workload, adding execute hosts as jobs are queued. To enable this check the box below and choose the maximum core count for the cluster"
+    Order = 30
+
+        [[[parameter Autoscale]]]
+        Label = Autoscale
+        DefaultValue = true
+        Widget.Plugin = pico.form.BooleanCheckBox
+        Widget.Label = Start and stop execute instances automatically
+
+        [[[parameter MaxExecuteCoreCount]]]
+        Label = Max Cores
+        Description = The maximum number of execute cores to start
+        DefaultValue = 100
+        Config.Plugin = pico.form.NumberTextBox
+        Config.MinValue = 1
+        Config.IntegerOnly = true
+
+        [[[parameter UseLowPrio]]]
+        Label = Low Priority
+        DefaultValue = false
+        Widget.Plugin = pico.form.BooleanCheckBox
+        Widget.Label = Use low priority instances for execute hosts
+
+
