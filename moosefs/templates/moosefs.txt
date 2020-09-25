@@ -20,12 +20,9 @@ Category = Filesystems
     KeepAlive = true
     
         [[[configuration]]]
-
         moosefs.rootdir = $MooseFSRoot
         cyclecloud.maintenance_converge.enabled = false
         cyclecloud.selinux.policy = permissive
-
-        [[[cluster-init moosefs:default:1.0.0]]]
 
     [[node master]]
     MachineType = $MasterVMType
