@@ -20,7 +20,6 @@ Category = Filesystems
     KeepAlive = true
     
         [[[configuration]]]
-        moosefs.rootdir = $MooseFSRoot
         cyclecloud.maintenance_converge.enabled = false
         cyclecloud.selinux.policy = permissive
 
@@ -49,6 +48,7 @@ Category = Filesystems
         [[[cluster-init moosefs:chunk:1.0.0]]]
 
         [[[configuration]]]
+        moosefs.rootdir = $MooseFSRoot
         moosefs.masterip = ${master.instance.privateip}
 
         [[[configuration cyclecloud.mounts.nvme]]]
@@ -67,7 +67,7 @@ Category = Filesystems
 
         [[[configuration]]]
         moosefs.masterip = ${master.instance.privateip}
-
+		moosefs.mountpoint = $MooseFSMount
 
 [parameters About]
 Order = 1
@@ -136,12 +136,17 @@ Order = 20
     Order = 5
 
         [[[parameter MooseFSRoot ]]]
-        Label = MooseFS Dir 
+        Label = Chunk folder 
+        Description = The root directory for MooseFS on master and chunk nodes
+        DefaultValue = /data/mfs    
+
+        [[[parameter MooseFSMount ]]]
+        Label = Client mountpoint 
         Description = The root directory for MooseFS on master and chunk nodes
         DefaultValue = /mnt/mfs    
 
         [[[parameter InitialChunkCount]]]
-        Label = Storage VM Count
+        Label = Chunk VM Count
         Description = The number of chunk nodes to start
         DefaultValue = 2
         Config.Plugin = pico.form.NumberTextBox
@@ -150,7 +155,7 @@ Order = 20
         Config.IntegerOnly = true
 
         [[[parameter InitialClientCount]]]
-        Label = MDS VM Count
+        Label = Client VM Count
         Description = The number of client nodes to launch at startup
         DefaultValue = 1
         Config.Plugin = pico.form.NumberTextBox
@@ -205,3 +210,4 @@ Order = 20
         DefaultValue = true
         ParameterType = Boolean
         Config.Label = Access master node from the Internet
+
