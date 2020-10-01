@@ -1,0 +1,135 @@
+[cluster VM with ANF]
+FormLayout = selectionpanel
+Category = Applications
+
+    [[node defaults]]
+
+    Credentials = $Credentials    
+    SubnetId = $SubnetId
+    Region = $Region
+    ImageName = $ImageName
+    KeyPairLocation = ~/.ssh/cyclecloud.pem
+    UsePublicNetwork = $UsePublicNetwork
+
+        [[[configuration cyclecloud.mounts.anf]]]
+        type = nfs
+        mountpoint = $ANFMountPoint
+        export_path = $ANFExport
+        address = $ANFServerName
+
+ 
+    [[node buildvm]]
+    MachineType = $MachineType
+    IsReturnProxy = $ReturnProxy
+    AdditionalClusterInitSpecs = $ClusterInitSpecs
+    
+    InstallJetpack = true
+    AwaitInstallation = true
+
+        [[[configuration]]]
+        cyclecloud.discoverable = true
+
+        [[[input-endpoint ganglia]]]
+        PrivatePort = 8652
+        PublicPort = 8652        
+
+        [[[network-interface eth0]]]
+        AssociatePublicIpAddress = $UsePublicNetwork
+    
+
+[parameters Required Settings]
+Order = 1
+
+    [[parameters Template Description]]
+    Description = "This template is setting up a standalone VM with ANF mount"
+    Order = 10
+
+    [[parameters Subscription Settings]]
+    Order = 10
+        [[[parameter Credentials]]]
+        Description = The credentials for the cloud provider
+        ParameterType = Cloud.Credentials
+
+    
+[parameters VM Settings]
+Order = 20
+
+    [[parameters Hardware ]]
+    Description = "Select the hardware configuration of the VM node"
+    Order = 20
+
+        [[[parameter Region]]]
+        Label = Region
+        Description = Deployment Location
+        ParameterType = Cloud.Region
+        DefaultValue = westeurope
+
+        [[[parameter SubnetId]]]
+        Label = Subnet ID
+        Description = Subnet Resource Path (ResourceGroup/VirtualNetwork/Subnet)
+        ParameterType = Azure.Subnet
+        Required = True
+
+        [[[parameter MachineType]]]
+        Label = VM SKU
+        Description = VM SKU
+        ParameterType = Cloud.MachineType
+        DefaultValue = Standard_NV6s_v3
+
+    [[parameters Software]]
+    Description = "Specify the base OS installed on the VM, and optionally the cluster-init and chef scripts from your Locker."
+    Order = 10   
+
+        [[[parameter ImageName]]]
+        Label = OS image
+        ParameterType = Cloud.Image
+        Config.OS = linux
+        DefaultValue = OpenLogic:CentOS-HPC:7.6:latest
+
+        [[[parameter ClusterInitSpecs]]]
+        Label = Cluster-Init specs
+        Description = Cluster init specs to apply to the VM
+        ParameterType = Cloud.ClusterInitSpecs
+
+
+    [[parameters Advanced Networking]]
+    Description = Advanced networking settings
+
+        [[[parameter ReturnProxy]]]
+        Label = Return Proxy
+        DefaultValue = true
+        ParameterType = Boolean
+        Config.Label = Use SSH tunnel to connect to CycleCloud (required if direct access is blocked)
+
+        [[[parameter UsePublicNetwork]]]
+        Label = Public IP
+        DefaultValue = true
+        ParameterType = Boolean
+        Config.Label = Access master node from the Internet
+
+        
+[parameters External Filesystems]
+Order = 30
+
+    [[parameters ANF Settings]]
+    Order = 28
+    Description = "Use ANF server as a NAS. Settings for defining the ANF"
+
+        [[[parameter ANFServerName]]]
+        Label = ANF Server name or IP address
+        Description = The ANF server name or ip address.
+        DefaultValue = x.x.x.x
+        Required = True
+
+        [[[parameter ANFExport]]]
+        Label = ANF Export
+        Description = The export on the ANF.
+        DefaultValue = /anf/export/path
+        Required = True
+
+        [[[parameter ANFMountPoint]]]
+        Label = ANF MountPoint
+        Description = The mount point to mount the ANF file server on.
+        DefaultValue = /anf/mount/path
+        Required = True
+
