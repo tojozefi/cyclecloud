@@ -8,6 +8,7 @@
 [cluster moosefs]
 FormLayout = selectionpanel
 Category = Filesystems
+IconUrl = https://raw.githubusercontent.com/tojozefi/cyclecloud/master/moosefs/moosefs.png
 
     [[node defaults]]
     UsePublicNetwork = $UsePublicNetwork
