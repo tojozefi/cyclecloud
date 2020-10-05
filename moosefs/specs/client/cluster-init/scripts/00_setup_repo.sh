@@ -15,7 +15,7 @@ if [[ "$ID" == "ubuntu" ]]; then
 	fi
 	apt update
 elif [[ "$ID" == "centos" ]]; then
-  curl "https://ppa.moosefs.com/RPM-GPG-KEY-MooseFS" > /etc/pki/rpm-gpg/RPM-GPG-KEY-MooseFS
+	curl "https://ppa.moosefs.com/RPM-GPG-KEY-MooseFS" > /etc/pki/rpm-gpg/RPM-GPG-KEY-MooseFS
 	curl "http://ppa.moosefs.com/MooseFS-3-el${VERSION_ID}.repo" > /etc/yum.repos.d/MooseFS.repo
 else
 	echo "unsupported OS" >&2
