@@ -28,7 +28,7 @@ IconUrl = https://raw.githubusercontent.com/tojozefi/cyclecloud/master/moosefs/m
     MachineType = $MasterVMType
     IsReturnProxy = $ReturnProxy
     
-        [[[cluster-init moosefs:master:1.0.0]]]
+        [[[cluster-init moosefs:master:1.0.1]]]
 
         [[[network-interface eth0]]]
         AssociatePublicIpAddress = $UsePublicNetwork
@@ -46,7 +46,7 @@ IconUrl = https://raw.githubusercontent.com/tojozefi/cyclecloud/master/moosefs/m
     MachineType = $ChunkVMType
     InitialCount = $InitialChunkCount
 
-        [[[cluster-init moosefs:chunk:1.0.0]]]
+        [[[cluster-init moosefs:chunk:1.0.1]]]
 
         [[[configuration]]]
         moosefs.rootdir = $MooseFSRoot
@@ -64,7 +64,7 @@ IconUrl = https://raw.githubusercontent.com/tojozefi/cyclecloud/master/moosefs/m
     MachineType = $ClientVMType
     InitialCount = $InitialClientCount
 
-        [[[cluster-init moosefs:client:1.0.0]]]
+        [[[cluster-init moosefs:client:1.0.1]]]
 
         [[[configuration]]]
         moosefs.masterip = ${master.instance.privateip}
